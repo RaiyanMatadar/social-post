@@ -3,18 +3,26 @@ const mongoose = require("mongoose")
 const contentType = new mongoose.Schema({
   type: {
     type: String,
-    enum: [article, image],
+    enum: ['article', 'image'],
     required: true
   },
 
   textContent: { type: String },
 
   imageContent: {
-    type: String,
-    url: { type: String, required: true },
-    caption: { type: String, required: true },
-    altText: { type: String, required: true }
-  }
+    url: {
+      type: String,
+      required: function () { return this.type === 'image'; }
+    },
+    caption: {
+      type: String,
+      required: function () { return this.type === 'image'; }
+    },
+    altText: {
+      type: String,
+      required: function () { return this.type === 'image'; }
+    }
+  },
 }, { _id: false })
 
 const createArticleSchema = new mongoose.Schema({
@@ -23,8 +31,9 @@ const createArticleSchema = new mongoose.Schema({
   body: [contentType],
 
   author: {
-    type: Schema.Types.ObjectId,
-    ref: 'User'
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required : true 
   }
 })
 
